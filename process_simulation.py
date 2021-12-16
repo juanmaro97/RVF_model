@@ -22,12 +22,13 @@ wsh_angle = 15                                          # [°]
 dew_angle1 = 15                                         # [°]
 dew_angle2 = 35                                         # [°]
 w = 1.2                                                 # [rpm]
-tf = RVDF.angle_to_time(filtration_angle,w)             # Tiempo de filtración [s]
-Af = RVDF.drum_filter_area(rd,L,filtration_angle)       # Área de filtración [m2]
 Rm = 0                                                  # Resistencia del medio filtrante
-nivel_lodos = 0.95                                      # Nivel del tanque de lodos []
+nivel_lodos = 0.95                                    # Nivel del tanque de lodos []
 
 filtration_angle, dew_angle1 = RVDF.real_filtration_angle(filtration_angle,dew_angle1,nivel_lodos)     # estimar cambio en el ánglo de filtración por nivel de lodos
+
+tf = RVDF.angle_to_time(filtration_angle,w)             # Tiempo de filtración [s]
+Af = RVDF.drum_filter_area(rd,L,filtration_angle)       # Área de filtración [m2]
 
 ####### ENTRADAS PARÁMETROS TORTA Y LODOS ########
 u = 400*10**-3                                 # Viscosidad de la suspensión [Pa*s]
@@ -105,10 +106,25 @@ times_array = np.arange(0, ((arrays.shape[0]-ts)*ts), ts)   # crea arreglo tempo
 
 #### plot ###
 
-plt.suptitle('Drum total cicle filtration')
-plt.plot(times_array,arrays, 'r',label="Cane juice filtration [m3]")
-plt.ylabel('Volume [m3]')
-plt.xlabel('Time [s]')
-plt.grid()
-plt.legend()
+derivative = [] # calculate total filtration rate
+for i in range (0,len(arrays)-1):
+    derivative = append(derivative,arrays[i+1]-arrays[i])
+
+derivative = derivative/ts
+
+fig, axarr = plt.subplots(2, 1)
+fig.canvas.set_window_title('RVF') 
+fig.suptitle('Drum total cicle filtration')
+
+axarr[0].plot(times_array,arrays, 'b',label="Cane juice filtration [m3]")
+axarr[0].legend(loc='best')
+axarr[0].grid()
+axarr[0].set(ylabel = 'V [m3]')
+axarr[1].plot(times_array[0:195],derivative, 'g',label="Cane juice rate filtration [m3/s]")
+axarr[1].legend(loc='best')
+axarr[1].grid()
+axarr[1].set(ylabel = 'Q [m3/s]')
+axarr[1].set(xlabel = 'Time [s]')
+
+
 plt.show()
