@@ -65,7 +65,7 @@ class RVDF:
 
     def real_filtration_angle(filtration_angle, dew1_angle, nivel):
         theta_perdido =  np.rad2deg(np.arcsin(1-nivel))
-        filtration_angle = filtration_angle - theta_perdido
+        filtration_angle = filtration_angle - 2*theta_perdido
         dew1_angle = dew1_angle + theta_perdido
 
         return filtration_angle, dew1_angle
